@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:js_interop';
 
 import 'package:flutter_deck_client/flutter_deck_client.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 import 'package:web/web.dart' as web;
 
 const _flutterDeckStateKey = 'flutter-deck-state';
@@ -39,7 +39,14 @@ class FlutterDeckWebClient implements FlutterDeckClient {
   }
 
   @override
-  void openPresenterView() => launchUrl(Uri.parse('#/presenter-view'));
+  void openPresenterView() {
+    web.window.open(
+      '#/presenter-view',
+      '_blank',
+      'width=810,height=810,'
+          'scrollbars=yes,resizable=yes,locatino=no,menubar=no,toolbar=no',
+    );
+  }
 
   @override
   void updateState(FlutterDeckState state) => _setState(state);
