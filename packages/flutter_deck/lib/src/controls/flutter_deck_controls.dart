@@ -4,6 +4,7 @@ import 'package:flutter_deck/src/controls/localized_shortcut_labeler.dart';
 import 'package:flutter_deck/src/flutter_deck.dart';
 import 'package:flutter_deck/src/flutter_deck_layout.dart';
 import 'package:flutter_deck/src/theme/flutter_deck_theme.dart';
+import 'package:flutter_deck/src/widgets/internal/flutter_deck_preview_context.dart';
 
 /// A widget that allows the user to control the slide deck.
 ///
@@ -34,6 +35,9 @@ class FlutterDeckControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPreview = FlutterDeckPreviewContext.of(context)?.isPreview ?? false;
+    if (isPreview) return child;
+
     final flutterDeck = context.flutterDeck;
 
     if (!flutterDeck.globalConfiguration.controls.presenterToolbarVisible) {

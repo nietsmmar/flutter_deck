@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_deck/src/flutter_deck.dart';
 import 'package:flutter_deck/src/flutter_deck_router.dart';
 import 'package:flutter_deck/src/theme/flutter_deck_theme.dart';
+import 'package:flutter_deck/src/widgets/internal/flutter_deck_preview_context.dart';
 
 /// Renders the preview of the current and next slide.
 ///
@@ -10,10 +11,7 @@ import 'package:flutter_deck/src/theme/flutter_deck_theme.dart';
 /// the next slide.
 class FlutterDeckPresenterSlidePreview extends StatelessWidget {
   /// Creates a [FlutterDeckPresenterSlidePreview] widget.
-  FlutterDeckPresenterSlidePreview({super.key}) : autoSizeGroup = AutoSizeGroup();
-
-  /// The auto size group for the text widgets.
-  final AutoSizeGroup autoSizeGroup;
+  const FlutterDeckPresenterSlidePreview({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,23 +25,25 @@ class FlutterDeckPresenterSlidePreview extends StatelessWidget {
 
         return Padding(
           padding: const EdgeInsets.all(16),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Flexible(
-                child: _SlidePreview(
-                  autoSizeGroup: autoSizeGroup,
-                  index: currentSlideIndex,
-                  step: currentStep,
-                  steps: slideSteps,
+          child: FlutterDeckPreviewContext(
+            isPreview: true,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: _SlidePreview(
+                    index: currentSlideIndex,
+                    step: currentStep,
+                    steps: slideSteps,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Flexible(
-                child: _SlidePreview(autoSizeGroup: autoSizeGroup, index: currentSlideIndex + 1, next: true),
-              ),
-            ],
+                const SizedBox(width: 16),
+                Flexible(
+                  child: _SlidePreview(index: currentSlideIndex + 1, next: true),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -52,9 +52,8 @@ class FlutterDeckPresenterSlidePreview extends StatelessWidget {
 }
 
 class _SlidePreview extends StatelessWidget {
-  const _SlidePreview({required this.autoSizeGroup, required this.index, this.next = false, this.step, this.steps});
+  const _SlidePreview({required this.index, this.next = false, this.step, this.steps});
 
-  final AutoSizeGroup autoSizeGroup;
   final int index;
   final bool next;
   final int? step;
@@ -70,19 +69,6 @@ class _SlidePreview extends StatelessWidget {
     return next ? 'Next: $slideInfo' : 'Current: $slideInfo';
   }
 
-  String _getSlideTitle(FlutterDeckRouterSlide slide) {
-    final configuration = slide.configuration;
-    final title = configuration.title;
-
-    if (title != null) return title;
-
-    final header = configuration.header;
-
-    if (header.showHeader) return header.title;
-
-    return configuration.route;
-  }
-
   @override
   Widget build(BuildContext context) {
     final flutterDeck = context.flutterDeck;
@@ -90,6 +76,10 @@ class _SlidePreview extends StatelessWidget {
     final slides = flutterDeck.router.slides;
     final aspectRatio = slideSize.isResponsive ? 16 / 9 : slideSize.width! / slideSize.height!;
     final isLastSlide = index >= slides.length;
+
+    final slide = isLastSlide ? null : slides[index];
+    final configuration = slide?.configuration;
+    final previewBuilder = configuration?.previewBuilder;
 
     return Column(
       children: [
@@ -99,48 +89,36 @@ class _SlidePreview extends StatelessWidget {
           child: AspectRatio(
             aspectRatio: aspectRatio,
             child: isLastSlide
-                ? Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Center(
-                      child: _SlideTitle(
-                        autoSizeGroup: autoSizeGroup,
-                        color: Theme.of(context).colorScheme.onSurface,
-                        title: 'End of presentation',
-                      ),
-                    ),
+                ? const Center(
+                    child: Text('End of presentation'),
                   )
-                : Container(
-                    color: Theme.of(context).colorScheme.secondary,
-                    padding: const EdgeInsets.all(16),
-                    child: Center(
-                      child: _SlideTitle(
-                        autoSizeGroup: autoSizeGroup,
-                        color: Theme.of(context).colorScheme.onSecondary,
-                        title: _getSlideTitle(slides[index]),
-                      ),
-                    ),
-                  ),
-          ),
-        ),
-      ],
-    );
+                : previewBuilder != null
+                    ? previewBuilder(context)
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          if (slideSize.isResponsive) {
+                            return slide!.widget;
+                          }
+
+                          final scale = constraints.maxWidth / slideSize.width!;
+
+                          return ClipRect(
+                            child: Transform.scale(
+                              scale: scale,
+                              alignment: Alignment.topLeft,
+                              child: SizedBox(
+                                                            width: slideSize.width,
+                                                            height: slideSize.height,
+                                                            child: slide!.widget,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
   }
 }
 
-class _SlideTitle extends StatelessWidget {
-  const _SlideTitle({required this.autoSizeGroup, required this.color, required this.title});
-
-  final AutoSizeGroup autoSizeGroup;
-  final Color color;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return AutoSizeText(
-      title,
-      group: autoSizeGroup,
-      maxLines: 1,
-      style: FlutterDeckTheme.of(context).textTheme.bodyLarge.copyWith(color: color, fontWeight: FontWeight.w500),
-    );
-  }
-}

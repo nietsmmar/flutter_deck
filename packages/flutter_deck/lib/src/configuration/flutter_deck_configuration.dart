@@ -121,16 +121,17 @@ class FlutterDeckSlideConfiguration extends FlutterDeckConfiguration {
     this.speakerNotes = '',
     this.steps = 1,
     this.title,
+    this.previewBuilder,
     FlutterDeckFooterConfiguration? footer,
     FlutterDeckHeaderConfiguration? header,
     FlutterDeckProgressIndicator? progressIndicator,
     bool? showProgress,
     FlutterDeckTransition? transition,
-  }) : _footerConfigurationOverride = footer,
-       _headerConfigurationOverride = header,
-       _progressIndicatorOverride = progressIndicator,
-       _showProgressOverride = showProgress,
-       _transitionOverride = transition;
+  })  : _footerConfigurationOverride = footer,
+        _headerConfigurationOverride = header,
+        _progressIndicatorOverride = progressIndicator,
+        _showProgressOverride = showProgress,
+        _transitionOverride = transition;
 
   /// Creates a configuration for a slide. This constructor is used internally
   /// to create a configuration when the global configuration is overridden.
@@ -141,16 +142,17 @@ class FlutterDeckSlideConfiguration extends FlutterDeckConfiguration {
     this.speakerNotes = '',
     this.steps = 1,
     this.title,
+    this.previewBuilder,
     super.footer,
     super.header,
     super.progressIndicator,
     super.showProgress,
     super.transition,
-  }) : _footerConfigurationOverride = null,
-       _headerConfigurationOverride = null,
-       _progressIndicatorOverride = null,
-       _showProgressOverride = null,
-       _transitionOverride = null;
+  })  : _footerConfigurationOverride = null,
+        _headerConfigurationOverride = null,
+        _progressIndicatorOverride = null,
+        _showProgressOverride = null,
+        _transitionOverride = null;
 
   /// The route for the slide.
   final String route;
@@ -160,6 +162,12 @@ class FlutterDeckSlideConfiguration extends FlutterDeckConfiguration {
   /// If the title is set, it will be used in the navigation drawer instead of
   /// the header title (or route as a fallback).
   final String? title;
+
+  /// A custom widget builder for the slide preview.
+  ///
+  /// If this is set, it will be used to build the slide preview in the
+  /// presenter view instead of the actual slide content.
+  final WidgetBuilder? previewBuilder;
 
   /// The speaker notes for the slide.
   ///
@@ -204,6 +212,7 @@ class FlutterDeckSlideConfiguration extends FlutterDeckConfiguration {
       speakerNotes: speakerNotes,
       steps: steps,
       title: title,
+      previewBuilder: previewBuilder,
       footer: _footerConfigurationOverride ?? configuration.footer,
       header: _headerConfigurationOverride ?? configuration.header,
       progressIndicator: _progressIndicatorOverride ?? configuration.progressIndicator,
@@ -270,7 +279,7 @@ class FlutterDeckHeaderConfiguration {
   /// Creates a configuration for the slide deck header. By default, the header
   /// is shown. The title must not be empty.
   const FlutterDeckHeaderConfiguration({this.showHeader = true, this.title = ''})
-    : assert(!showHeader || title != '', 'If showHeader is true, title must not be empty.');
+      : assert(!showHeader || title != '', 'If showHeader is true, title must not be empty.');
 
   /// Whether to show the header or not.
   final bool showHeader;
