@@ -50,11 +50,7 @@ class FlutterDeckRouter extends ChangeNotifier {
   String? _getInitialRoute() {
     final initialRoute = slides.where((s) => s.configuration.initial).singleOrNull?.route;
 
-    if (!kIsWeb) return initialRoute;
-
-    final fragment = Uri.base.fragment;
-
-    return fragment.isNotEmpty ? Uri.parse(fragment).path : initialRoute;
+    return initialRoute;
   }
 
   /// Builds the [GoRouter] for the slide deck.
