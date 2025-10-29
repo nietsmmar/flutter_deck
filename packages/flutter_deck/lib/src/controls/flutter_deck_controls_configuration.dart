@@ -84,24 +84,29 @@ class FlutterDeckShortcutsConfiguration {
   /// - [LogicalKeyboardKey] for a list of all available keys.
   const FlutterDeckShortcutsConfiguration({
     this.enabled = true,
-    this.nextSlide = const SingleActivator(LogicalKeyboardKey.arrowRight),
-    this.previousSlide = const SingleActivator(LogicalKeyboardKey.arrowLeft),
+    this.nextSlide = const [SingleActivator(LogicalKeyboardKey.arrowRight)],
+    this.previousSlide = const [SingleActivator(LogicalKeyboardKey.arrowLeft)],
     this.toggleMarker = const SingleActivator(LogicalKeyboardKey.keyM),
     this.toggleNavigationDrawer = const SingleActivator(LogicalKeyboardKey.period),
   });
 
   /// Creates a configuration for the slide deck keyboard shortcuts where they
   /// are disabled.
-  const FlutterDeckShortcutsConfiguration.disabled() : this(enabled: false);
+  const FlutterDeckShortcutsConfiguration.disabled()
+      : this(
+          enabled: false,
+          nextSlide: const [],
+          previousSlide: const [],
+        );
 
   /// Whether keyboard shortcuts are enabled or not.
   final bool enabled;
 
-  /// The key combination to use for going to the next slide.
-  final SingleActivator nextSlide;
+  /// The key combinations to use for going to the next slide.
+  final List<SingleActivator> nextSlide;
 
-  /// The key combination to use for going to the previous slide.
-  final SingleActivator previousSlide;
+  /// The key combinations to use for going to the previous slide.
+  final List<SingleActivator> previousSlide;
 
   /// The key combination to use for toggling the marker.
   final SingleActivator toggleMarker;

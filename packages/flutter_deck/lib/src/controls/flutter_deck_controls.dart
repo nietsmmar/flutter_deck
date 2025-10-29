@@ -105,10 +105,12 @@ class _PreviousButton extends StatelessWidget {
     final flutterDeck = context.flutterDeck;
     final controlsNotifier = flutterDeck.controlsNotifier;
     final shortcuts = flutterDeck.globalConfiguration.controls.shortcuts;
-    final shortcut = LocalizedShortcutLabeler.instance.getShortcutLabel(
-      shortcuts.previousSlide,
-      MaterialLocalizations.of(context),
-    );
+    final shortcut = shortcuts.previousSlide.isNotEmpty
+        ? LocalizedShortcutLabeler.instance.getShortcutLabels(
+            shortcuts.previousSlide,
+            MaterialLocalizations.of(context),
+          )
+        : '';
 
     return ListenableBuilder(
       listenable: controlsNotifier,
@@ -137,10 +139,12 @@ class _NextButton extends StatelessWidget {
     final flutterDeck = context.flutterDeck;
     final controlsNotifier = flutterDeck.controlsNotifier;
     final shortcuts = flutterDeck.globalConfiguration.controls.shortcuts;
-    final shortcut = LocalizedShortcutLabeler.instance.getShortcutLabel(
-      shortcuts.nextSlide,
-      MaterialLocalizations.of(context),
-    );
+    final shortcut = shortcuts.nextSlide.isNotEmpty
+        ? LocalizedShortcutLabeler.instance.getShortcutLabels(
+            shortcuts.nextSlide,
+            MaterialLocalizations.of(context),
+          )
+        : '';
 
     return ListenableBuilder(
       listenable: controlsNotifier,

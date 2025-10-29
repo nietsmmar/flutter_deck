@@ -94,6 +94,25 @@ class LocalizedShortcutLabeler {
   ///
   /// The keys are joined by spaces on macOS and iOS, and by "+" on other
   /// platforms.
+  String getShortcutLabels(
+    List<MenuSerializableShortcut> shortcuts,
+    MaterialLocalizations localizations,
+  ) {
+    return shortcuts.map((shortcut) => getShortcutLabel(shortcut, localizations)).join(', ');
+  }
+
+  /// Returns the label to be shown to the user in the UI when a
+  /// [MenuSerializableShortcut] is used as a keyboard shortcut.
+  ///
+  /// When [defaultTargetPlatform] is [TargetPlatform.macOS] or
+  /// [TargetPlatform.iOS], this will return graphical key representations when
+  /// it can. For instance, the default [LogicalKeyboardKey.shift] will return
+  /// '⇧', and the arrow keys will return arrows. The key
+  /// [LogicalKeyboardKey.meta] will show as '⌘', [LogicalKeyboardKey.control]
+  /// will show as '˄', and [LogicalKeyboardKey.alt] will show as '⌥'.
+  ///
+  /// The keys are joined by spaces on macOS and iOS, and by "+" on other
+  /// platforms.
   String getShortcutLabel(MenuSerializableShortcut shortcut, MaterialLocalizations localizations) {
     final serialized = shortcut.serializeForMenu();
     final String keySeparator;

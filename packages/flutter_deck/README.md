@@ -91,8 +91,14 @@ FlutterDeckApp(
       gestures: FlutterDeckGesturesConfiguration.mobileOnly(),
       shortcuts: FlutterDeckShortcutsConfiguration(
         enabled: true,
-        nextSlide: SingleActivator(LogicalKeyboardKey.arrowRight),
-        previousSlide: SingleActivator(LogicalKeyboardKey.arrowLeft),
+        // A list of shortcuts to go to the next slide.
+        nextSlide: [
+          SingleActivator(LogicalKeyboardKey.arrowRight),
+        ],
+        // A list of shortcuts to go to the previous slide.
+        previousSlide: [
+          SingleActivator(LogicalKeyboardKey.arrowLeft),
+        ],
         toggleMarker: SingleActivator(
           LogicalKeyboardKey.keyM,
           control: true,
