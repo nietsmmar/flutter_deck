@@ -39,12 +39,6 @@ class FlutterDeckApp extends StatefulWidget {
   /// speaker. This information will be displayed in the title slide as well as
   /// the footer of all slides.
   ///
-  /// The [lightTheme] and [darkTheme] arguments can be used to provide custom
-  /// themes for the slide deck.
-  ///
-  /// The [themeMode] argument can be used to provide a custom theme mode for
-  /// the slide deck.
-  ///
   /// The [locale], [localizationsDelegates] and [supportedLocales] arguments
   /// are equivalent to those of [MaterialApp]'s.
   ///
@@ -65,12 +59,10 @@ class FlutterDeckApp extends StatefulWidget {
   /// speaker.
   const FlutterDeckApp({
     required this.slides,
+    required this.materialTheme,
     this.client,
     this.configuration = const FlutterDeckConfiguration(),
     this.speakerInfo,
-    this.lightTheme,
-    this.darkTheme,
-    this.themeMode = ThemeMode.system,
     this.locale = _defaultLocale,
     this.localizationsDelegates,
     this.supportedLocales = const <Locale>[_defaultLocale],
@@ -106,21 +98,6 @@ class FlutterDeckApp extends StatefulWidget {
   /// Information about the speaker.
   final FlutterDeckSpeakerInfo? speakerInfo;
 
-  /// The theme to use when the app is in light mode.
-  ///
-  /// If not provided, the default [FlutterDeckThemeData.light] is used.
-  final FlutterDeckThemeData? lightTheme;
-
-  /// The theme to use when the app is in dark mode.
-  ///
-  /// If not provided, the default [FlutterDeckThemeData.dark] is used.
-  final FlutterDeckThemeData? darkTheme;
-
-  /// The theme mode to use.
-  ///
-  /// By default, the system theme mode is used.
-  final ThemeMode themeMode;
-
   /// The initial locale for the slide deck. Defaults to English (Locale('en')).
   ///
   /// See also:
@@ -140,6 +117,11 @@ class FlutterDeckApp extends StatefulWidget {
   /// See also:
   /// * [MaterialApp.supportedLocales], which is equivalent to this argument.
   final Iterable<Locale> supportedLocales;
+
+  /// A material theme to use for the slide deck.
+  ///
+  /// If not provided, the default light and dark themes will be used.
+  final ThemeData materialTheme;
 
   /// Whether the app should run as a presenter view.
   ///
@@ -187,7 +169,7 @@ class _FlutterDeckAppState extends State<FlutterDeckApp> {
       locale: widget.locale,
       supportedLocales: widget.supportedLocales,
     );
-    _themeNotifier = FlutterDeckThemeNotifier(widget.themeMode);
+    _themeNotifier = FlutterDeckThemeNotifier(ThemeMode.system);
     _presenterController = FlutterDeckPresenterController(
       client: widget.client,
       controlsNotifier: _controlsNotifier,
@@ -261,37 +243,31 @@ class _FlutterDeckAppState extends State<FlutterDeckApp> {
       valueListenable: _localizationNotifier,
       builder: (context, locale, _) => ValueListenableBuilder(
         valueListenable: _themeNotifier,
-        builder: (context, themeMode, _) {
-          final theme = context.darkModeEnabled(themeMode)
-              ? widget.darkTheme ?? FlutterDeckThemeData.dark()
-              : widget.lightTheme ?? FlutterDeckThemeData.light();
-
-          return MaterialApp.router(
-            routerConfig: _router,
-            theme: theme.materialTheme,
-            builder: (context, child) => FlutterDeck(
-              configuration: widget.configuration,
-              router: _flutterDeckRouter,
-              speakerInfo: widget.speakerInfo,
-              autoplayNotifier: _autoplayNotifier,
+        builder: (context, themeMode, _) => MaterialApp.router(
+          routerConfig: _router,
+          theme: widget.materialTheme,
+          builder: (context, child) => FlutterDeck(
+            configuration: widget.configuration,
+            router: _flutterDeckRouter,
+            speakerInfo: widget.speakerInfo,
+            autoplayNotifier: _autoplayNotifier,
+            controlsNotifier: _controlsNotifier,
+            drawerNotifier: _drawerNotifier,
+            localizationNotifier: _localizationNotifier,
+            markerNotifier: _markerNotifier,
+            presenterController: _presenterController,
+            themeNotifier: _themeNotifier,
+            child: FlutterDeckControlsListener(
               controlsNotifier: _controlsNotifier,
-              drawerNotifier: _drawerNotifier,
-              localizationNotifier: _localizationNotifier,
               markerNotifier: _markerNotifier,
-              presenterController: _presenterController,
-              themeNotifier: _themeNotifier,
-              child: FlutterDeckControlsListener(
-                controlsNotifier: _controlsNotifier,
-                markerNotifier: _markerNotifier,
-                child: FlutterDeckTheme(data: theme, child: child!),
-              ),
+              child: FlutterDeckTheme(data: FlutterDeckThemeData.fromTheme(widget.materialTheme), child: child!),
             ),
-            debugShowCheckedModeBanner: false,
-            locale: locale,
-            localizationsDelegates: widget.localizationsDelegates,
-            supportedLocales: widget.supportedLocales,
-          );
-        },
+          ),
+          debugShowCheckedModeBanner: false,
+          locale: locale,
+          localizationsDelegates: widget.localizationsDelegates,
+          supportedLocales: widget.supportedLocales,
+        ),
       ),
     );
   }

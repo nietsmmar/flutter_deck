@@ -57,16 +57,9 @@ class FlutterDeckExample extends StatelessWidget {
         // Use a custom transition between slides.
         transition: const FlutterDeckTransition.fade(),
       ),
-      // You can also define your own light...
-      lightTheme: FlutterDeckThemeData.fromTheme(
-        ThemeData.from(colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB5FFFC)), useMaterial3: true),
-      ),
-      // ...and dark themes.
-      darkTheme: FlutterDeckThemeData.fromTheme(
-        ThemeData.from(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF16222A), brightness: Brightness.dark),
-          useMaterial3: true,
-        ),
+      materialTheme: ThemeData.from(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB5FFFC)),
+        useMaterial3: true,
       ),
       // Presentation is build automatically from the list of slides.
       slides: [

@@ -9,7 +9,7 @@ void main() {
     group('when slides list is empty', () {
       test('should throw [AssertionError]', () {
         expect(
-          () => FlutterDeckApp(slides: const []),
+          () => FlutterDeckApp(slides: const [], materialTheme: ThemeData.light()),
           throwsA(isA<AssertionError>().having((e) => e.message, 'message', 'You must provide at least one slide')),
         );
       });
@@ -17,7 +17,7 @@ void main() {
 
     group('adding NavigatorObservers', () {
       testWidgets('adds nothing by default', (tester) async {
-        await tester.pumpWidget(FlutterDeckApp(slides: [Container()]));
+        await tester.pumpWidget(FlutterDeckApp(slides: [Container()], materialTheme: ThemeData.light()));
 
         final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
         final delegate = app.routerConfig!.routerDelegate as GoRouterDelegate;
@@ -28,7 +28,13 @@ void main() {
       testWidgets('adds observer that registers slide changes', (tester) async {
         final myObserver = MyObserver();
 
-        await tester.pumpWidget(FlutterDeckApp(slides: [Container(), Container()], navigatorObservers: [myObserver]));
+        await tester.pumpWidget(
+          FlutterDeckApp(
+            slides: [Container(), Container()],
+            materialTheme: ThemeData.light(),
+            navigatorObservers: [myObserver],
+          ),
+        );
 
         expect(myObserver.changes, hasLength(1));
 

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_deck/flutter_deck.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -28,6 +29,7 @@ class SlideTester {
           socialHandle: '@flutter_deck',
         ),
         slides: [slide],
+        materialTheme: ThemeData.light(),
       ),
     );
   }

@@ -1,8 +1,6 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_deck/src/flutter_deck.dart';
 import 'package:flutter_deck/src/flutter_deck_router.dart';
-import 'package:flutter_deck/src/theme/flutter_deck_theme.dart';
 import 'package:flutter_deck/src/widgets/internal/flutter_deck_preview_context.dart';
 
 /// Renders the preview of the current and next slide.
@@ -32,16 +30,10 @@ class FlutterDeckPresenterSlidePreview extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Flexible(
-                  child: _SlidePreview(
-                    index: currentSlideIndex,
-                    step: currentStep,
-                    steps: slideSteps,
-                  ),
+                  child: _SlidePreview(index: currentSlideIndex, step: currentStep, steps: slideSteps),
                 ),
                 const SizedBox(width: 16),
-                Flexible(
-                  child: _SlidePreview(index: currentSlideIndex + 1, next: true),
-                ),
+                Flexible(child: _SlidePreview(index: currentSlideIndex + 1, next: true)),
               ],
             ),
           ),
@@ -89,36 +81,29 @@ class _SlidePreview extends StatelessWidget {
           child: AspectRatio(
             aspectRatio: aspectRatio,
             child: isLastSlide
-                ? const Center(
-                    child: Text('End of presentation'),
-                  )
+                ? const Center(child: Text('End of presentation'))
                 : previewBuilder != null
-                    ? previewBuilder(context)
-                    : LayoutBuilder(
-                        builder: (context, constraints) {
-                          if (slideSize.isResponsive) {
-                            return slide!.widget;
-                          }
+                ? previewBuilder(context)
+                : LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (slideSize.isResponsive) {
+                        return slide!.widget;
+                      }
 
-                          final scale = constraints.maxWidth / slideSize.width!;
+                      final scale = constraints.maxWidth / slideSize.width!;
 
-                          return ClipRect(
-                            child: Transform.scale(
-                              scale: scale,
-                              alignment: Alignment.topLeft,
-                              child: SizedBox(
-                                                            width: slideSize.width,
-                                                            height: slideSize.height,
-                                                            child: slide!.widget,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
+                      return ClipRect(
+                        child: Transform.scale(
+                          scale: scale,
+                          alignment: Alignment.topLeft,
+                          child: SizedBox(width: slideSize.width, height: slideSize.height, child: slide!.widget),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ),
+      ],
+    );
   }
 }
-
