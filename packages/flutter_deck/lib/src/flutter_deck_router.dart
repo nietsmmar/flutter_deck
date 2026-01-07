@@ -62,10 +62,14 @@ class FlutterDeckRouter extends ChangeNotifier {
   /// run in presenter view mode or not. If not provided, the deck will run in
   /// presenter view mode if the app is running on the web and the route is
   /// `/presenter-view`.
-  GoRouter build({bool? isPresenterView, List<NavigatorObserver>? navigatorObservers}) {
+  GoRouter build({
+    bool? isPresenterView,
+    List<NavigatorObserver>? navigatorObservers,
+    String? initialRouteOverride,
+  }) {
     _validateRoutes();
 
-    final initialRoute = _getInitialRoute();
+    final initialRoute = initialRouteOverride ?? _getInitialRoute();
 
     _initRouterData(initialRoute: initialRoute, isPresenterView: isPresenterView);
 
@@ -74,10 +78,16 @@ class FlutterDeckRouter extends ChangeNotifier {
       routes: _isPresenterView
           ? [
               GoRoute(path: '/', redirect: (_, __) => _presenterViewRoute),
-              GoRoute(path: _presenterViewRoute, builder: (_, __) => const PresenterView()),
+              GoRoute(
+                path: _presenterViewRoute,
+                builder: (_, __) => const PresenterView(),
+              ),
             ]
           : [
-              GoRoute(path: '/', redirect: (_, __) => initialRoute ?? slides.first.route),
+              GoRoute(
+                path: '/',
+                redirect: (_, __) => initialRoute ?? slides.first.route,
+              ),
               for (final slide in slides)
                 GoRoute(
                   path: slide.route,
@@ -254,8 +264,5 @@ class FlutterDeckRouter extends ChangeNotifier {
       ..addAll(newSlides);
 
     _validateRoutes();
-
-    _currentSlideIndex = 0;
-    _currentSlideStep = 1;
   }
 }

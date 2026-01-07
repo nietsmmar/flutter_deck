@@ -189,11 +189,17 @@ class _FlutterDeckAppState extends State<FlutterDeckApp> {
     super.didUpdateWidget(oldWidget);
 
     if (!listEquals(oldWidget.slides, widget.slides)) {
+      final oldSlideRoute = _flutterDeckRouter.slides.isNotEmpty
+          ? _flutterDeckRouter.slides[_flutterDeckRouter.currentSlideIndex].route
+          : null;
+
       final slides = widget.slides.where(_filterHidden).indexed.map(_buildRouterSlide).toList();
       _flutterDeckRouter.updateSlides(slides);
+
       _router = _flutterDeckRouter.build(
         isPresenterView: widget.isPresenterView,
         navigatorObservers: widget.navigatorObservers,
+        initialRouteOverride: oldSlideRoute,
       );
       setState(() {});
     }
