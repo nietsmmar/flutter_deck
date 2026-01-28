@@ -204,7 +204,8 @@ class FlutterDeckSlideConfiguration extends FlutterDeckConfiguration {
 
   /// Merges the slide configuration with the global configuration. The slide
   /// configuration values take precedence.
-  FlutterDeckSlideConfiguration mergeWithGlobal(FlutterDeckConfiguration configuration) {
+  FlutterDeckSlideConfiguration mergeWithGlobal(
+      FlutterDeckConfiguration configuration) {
     return FlutterDeckSlideConfiguration._(
       route: route,
       hidden: hidden,
@@ -215,7 +216,8 @@ class FlutterDeckSlideConfiguration extends FlutterDeckConfiguration {
       previewBuilder: previewBuilder,
       footer: _footerConfigurationOverride ?? configuration.footer,
       header: _headerConfigurationOverride ?? configuration.header,
-      progressIndicator: _progressIndicatorOverride ?? configuration.progressIndicator,
+      progressIndicator:
+          _progressIndicatorOverride ?? configuration.progressIndicator,
       showProgress: _showProgressOverride ?? configuration.showProgress,
       transition: _transitionOverride ?? configuration.transition,
     );

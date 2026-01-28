@@ -122,7 +122,7 @@ class _PreviousButton extends StatelessWidget {
         return IconButton(
           icon: const Icon(Icons.keyboard_arrow_left_rounded),
           tooltip:
-              'Previous'
+              'Zurück'
               '${shortcuts.enabled ? ' ($shortcut)' : ''}',
           onPressed: enabled ? controlsNotifier.previous : null,
         );
@@ -140,10 +140,7 @@ class _NextButton extends StatelessWidget {
     final controlsNotifier = flutterDeck.controlsNotifier;
     final shortcuts = flutterDeck.globalConfiguration.controls.shortcuts;
     final shortcut = shortcuts.nextSlide.isNotEmpty
-        ? LocalizedShortcutLabeler.instance.getShortcutLabels(
-            shortcuts.nextSlide,
-            MaterialLocalizations.of(context),
-          )
+        ? LocalizedShortcutLabeler.instance.getShortcutLabels(shortcuts.nextSlide, MaterialLocalizations.of(context))
         : '';
 
     return ListenableBuilder(
@@ -156,7 +153,7 @@ class _NextButton extends StatelessWidget {
         return IconButton(
           icon: const Icon(Icons.keyboard_arrow_right_rounded),
           tooltip:
-              'Next'
+              'Weiter'
               '${shortcuts.enabled ? ' ($shortcut)' : ''}',
           onPressed: enabled ? controlsNotifier.next : null,
         );
@@ -197,7 +194,7 @@ class _SlideNumberButton extends StatelessWidget {
               ),
             ),
             tooltip:
-                'Open navigation drawer'
+                'Navigation'
                 '${shortcuts.enabled ? ' ($shortcut)' : ''}',
             onPressed: enabled ? controlsNotifier.toggleDrawer : null,
           );
@@ -229,13 +226,13 @@ class _MarkerControls extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.edit_off_rounded),
                   tooltip:
-                      'Turn off marker'
+                      'Stift deaktivieren'
                       '${shortcuts.enabled ? ' ($shortcut)' : ''}',
                   onPressed: controlsNotifier.toggleMarker,
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete_forever_rounded),
-                  tooltip: 'Erase all',
+                  tooltip: 'Alles löschen',
                   onPressed: markerNotifier.paths.isNotEmpty ? markerNotifier.clear : null,
                 ),
               ],
@@ -265,17 +262,17 @@ class _AutoplayMenuButton extends StatelessWidget {
                   ? const Icon(Icons.pause_rounded)
                   : const Icon(Icons.play_arrow_rounded),
               onPressed: autoplayNotifier.isPlaying ? autoplayNotifier.pause : autoplayNotifier.play,
-              child: Text(autoplayNotifier.isPlaying ? 'Pause' : 'Play'),
+              child: Text(autoplayNotifier.isPlaying ? 'Pause' : 'Start'),
             ),
             const _PopupMenuDivider(),
-            const _AutoplayDurationButton(duration: Duration(seconds: 1), label: 'Every second'),
-            const _AutoplayDurationButton(duration: Duration(seconds: 2), label: 'Every 2 seconds'),
-            const _AutoplayDurationButton(duration: Duration(seconds: 3), label: 'Every 3 seconds'),
-            const _AutoplayDurationButton(duration: Duration(seconds: 5), label: 'Every 5 seconds'),
-            const _AutoplayDurationButton(duration: Duration(seconds: 10), label: 'Every 10 seconds'),
-            const _AutoplayDurationButton(duration: Duration(seconds: 15), label: 'Every 15 seconds'),
-            const _AutoplayDurationButton(duration: Duration(seconds: 30), label: 'Every 30 seconds'),
-            const _AutoplayDurationButton(duration: Duration(seconds: 60), label: 'Every minute'),
+            const _AutoplayDurationButton(duration: Duration(seconds: 1), label: 'Jede Sekunde'),
+            const _AutoplayDurationButton(duration: Duration(seconds: 2), label: 'Alle 2 Sekunden'),
+            const _AutoplayDurationButton(duration: Duration(seconds: 3), label: 'Alle 3 Sekunden'),
+            const _AutoplayDurationButton(duration: Duration(seconds: 5), label: 'Alle 5 Sekunden'),
+            const _AutoplayDurationButton(duration: Duration(seconds: 10), label: 'Alle 10 Sekunden'),
+            const _AutoplayDurationButton(duration: Duration(seconds: 15), label: 'Alle 15 Sekunden'),
+            const _AutoplayDurationButton(duration: Duration(seconds: 30), label: 'Alle 30 Sekunden'),
+            const _AutoplayDurationButton(duration: Duration(seconds: 60), label: 'Jede Minute'),
             const _PopupMenuDivider(),
             const _AutoplayLoopButton(),
           ],
@@ -352,7 +349,7 @@ class _AutoplayLoopButton extends StatelessWidget {
 
         return _MenuSelectionButton(
           selected: isLooping,
-          label: 'Loop',
+          label: 'Dauerschleife',
           closeOnActivate: false,
           onPressed: autoplayNotifier.toggleLooping,
         );
@@ -403,7 +400,7 @@ class _MarkerButton extends StatelessWidget {
       leadingIcon: const Icon(Icons.edit_rounded),
       trailingIcon: shortcuts.enabled ? Text('($shortcut)') : null,
       onPressed: controlsNotifier.toggleMarker,
-      child: const Text('Toggle marker'),
+      child: const Text('Stift ein-/ausschalten'),
     );
   }
 }
@@ -420,7 +417,7 @@ class _PresenterViewButton extends StatelessWidget {
       onPressed: () => presenterController
         ..init()
         ..open(),
-      child: const Text('Open presenter view'),
+      child: const Text('Präsenter-Tool öffnen'),
     );
   }
 }
@@ -446,7 +443,7 @@ class _FullscreenButton extends StatelessWidget {
           builder: (context, _) => MenuItemButton(
             leadingIcon: Icon(isInFullscreen ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded),
             onPressed: !markerNotifier.enabled ? onPressed : null,
-            child: Text(isInFullscreen ? 'Leave full screen' : 'Enter full screen'),
+            child: Text(isInFullscreen ? 'Vollbildmodus verlassen' : 'Vollbildmodus starten'),
           ),
         );
       },
@@ -494,11 +491,11 @@ class _OptionsMenuButton extends StatelessWidget {
       child: MenuAnchor(
         builder: (context, controller, child) => IconButton(
           icon: const Icon(Icons.more_vert_rounded),
-          tooltip: 'Open menu',
+          tooltip: 'Menü öffnen',
           onPressed: controller.isOpen ? controller.close : controller.open,
         ),
         menuChildren: [
-          const _ThemeButton(),
+          //const _ThemeButton(),
           const _MarkerButton(),
           if (canFullscreen) const _FullscreenButton(),
           const _PopupMenuDivider(),
