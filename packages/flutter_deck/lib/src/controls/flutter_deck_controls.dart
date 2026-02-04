@@ -5,6 +5,7 @@ import 'package:flutter_deck/src/flutter_deck.dart';
 import 'package:flutter_deck/src/flutter_deck_layout.dart';
 import 'package:flutter_deck/src/theme/flutter_deck_theme.dart';
 import 'package:flutter_deck/src/widgets/internal/flutter_deck_preview_context.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 /// A widget that allows the user to control the slide deck.
 ///
@@ -496,12 +497,13 @@ class _OptionsMenuButton extends StatelessWidget {
         ),
         menuChildren: [
           //const _ThemeButton(),
-          const _MarkerButton(),
-          if (canFullscreen) const _FullscreenButton(),
+          PointerInterceptor(child: const _MarkerButton()),
+          if (canFullscreen) PointerInterceptor(child: const _FullscreenButton()),
           const _PopupMenuDivider(),
-          const _AutoplayMenuButton(),
-          if (supportedLocales.length > 1) const _LocalizationMenuButton(),
-          if (presenterController.available && !router.isPresenterView) const _PresenterViewButton(),
+          PointerInterceptor(child: const _AutoplayMenuButton()),
+          if (supportedLocales.length > 1) PointerInterceptor(child: const _LocalizationMenuButton()),
+          if (presenterController.available && !router.isPresenterView)
+            PointerInterceptor(child: const _PresenterViewButton()),
         ],
       ),
     );
