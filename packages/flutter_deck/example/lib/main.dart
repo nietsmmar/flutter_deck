@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_deck/flutter_deck.dart';
 import 'package:flutter_deck_example/l10n/l10n.dart';
 import 'package:flutter_deck_example/slides/slides.dart';
 import 'package:flutter_deck_web_client/flutter_deck_web_client.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   runApp(const FlutterDeckExample());

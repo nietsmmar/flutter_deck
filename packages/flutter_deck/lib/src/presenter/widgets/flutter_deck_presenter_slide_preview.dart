@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_deck/src/flutter_deck.dart';
 import 'package:flutter_deck/src/flutter_deck_router.dart';
 import 'package:flutter_deck/src/widgets/internal/flutter_deck_preview_context.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Renders the preview of the current and next slide.
 ///

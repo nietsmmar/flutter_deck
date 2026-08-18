@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_deck/flutter_deck.dart';
 import 'package:flutter_deck/src/theme/widgets/flutter_deck_code_highlight_theme.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/default.dart';
 import 'package:flutter_highlight/themes/vs2015.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// This widget provides syntax highlighting for many languages.
 ///

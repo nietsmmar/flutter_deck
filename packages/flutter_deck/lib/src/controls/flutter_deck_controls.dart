@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_deck/src/controls/actions/actions.dart';
 import 'package:flutter_deck/src/controls/localized_shortcut_labeler.dart';
 import 'package:flutter_deck/src/flutter_deck.dart';
 import 'package:flutter_deck/src/flutter_deck_layout.dart';
 import 'package:flutter_deck/src/theme/flutter_deck_theme.dart';
 import 'package:flutter_deck/src/widgets/internal/flutter_deck_preview_context.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 /// A widget that allows the user to control the slide deck.
@@ -454,6 +454,7 @@ class _FullscreenButton extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _ThemeButton extends StatelessWidget {
   const _ThemeButton();
 

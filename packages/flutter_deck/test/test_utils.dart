@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_deck/flutter_deck.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SlideTester {
   const SlideTester({required this.tester, required this.showHeader, required this.showFooter, required this.slide});
