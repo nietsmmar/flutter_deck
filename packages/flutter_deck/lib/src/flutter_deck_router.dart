@@ -33,7 +33,10 @@ class FlutterDeckRouterSlide {
 /// current slide or step changes.
 class FlutterDeckRouter extends ChangeNotifier {
   /// Default constructor for [FlutterDeckRouter].
-  FlutterDeckRouter({required this.slides});
+  FlutterDeckRouter({required this.slides, this.onNavigationChanged});
+
+  /// Called whenever navigation changes the active slide or step.
+  final void Function(int slideIndex, int step)? onNavigationChanged;
 
   /// The slides to use in the slide deck.
   ///
@@ -66,28 +69,28 @@ class FlutterDeckRouter extends ChangeNotifier {
     bool? isPresenterView,
     List<NavigatorObserver>? navigatorObservers,
     String? initialRouteOverride,
+    int? initialSlideIndex,
+    int initialStep = 1,
   }) {
     _validateRoutes();
 
-    final initialRoute = initialRouteOverride ?? _getInitialRoute();
+    final initialRoute =
+        initialRouteOverride ??
+        (initialSlideIndex != null && initialSlideIndex >= 0 && initialSlideIndex < slides.length
+            ? slides[initialSlideIndex].route
+            : _getInitialRoute());
 
-    _initRouterData(initialRoute: initialRoute, isPresenterView: isPresenterView);
+    _initRouterData(initialRoute: initialRoute, initialStep: initialStep, isPresenterView: isPresenterView);
 
     return _router = GoRouter(
       observers: navigatorObservers,
       routes: _isPresenterView
           ? [
               GoRoute(path: '/', redirect: (_, __) => _presenterViewRoute),
-              GoRoute(
-                path: _presenterViewRoute,
-                builder: (_, __) => const PresenterView(),
-              ),
+              GoRoute(path: _presenterViewRoute, builder: (_, __) => const PresenterView()),
             ]
           : [
-              GoRoute(
-                path: '/',
-                redirect: (_, __) => initialRoute ?? slides.first.route,
-              ),
+              GoRoute(path: '/', redirect: (_, __) => initialRoute ?? slides.first.route),
               for (final slide in slides)
                 GoRoute(
                   path: slide.route,
@@ -104,9 +107,9 @@ class FlutterDeckRouter extends ChangeNotifier {
     )..routeInformationProvider.addListener(notifyListeners);
   }
 
-  void _initRouterData({String? initialRoute, bool? isPresenterView}) {
+  void _initRouterData({String? initialRoute, int initialStep = 1, bool? isPresenterView}) {
     _currentSlideIndex = initialRoute != null ? slides.indexWhere((s) => s.route == initialRoute) : 0;
-    _currentSlideStep = 1;
+    _currentSlideStep = initialStep.clamp(1, currentSlideConfiguration.steps);
     _isPresenterView = false;
 
     if (isPresenterView != null) {
@@ -195,6 +198,7 @@ class FlutterDeckRouter extends ChangeNotifier {
   }
 
   void _updateRoute() {
+    onNavigationChanged?.call(_currentSlideIndex, _currentSlideStep);
     if (_isPresenterView) return notifyListeners();
 
     final location = Uri(

@@ -44,6 +44,36 @@ void main() {
         expect(myObserver.changes, hasLength(2));
       });
     });
+
+    testWidgets('does not expose a platform-reporting provider when embedded', (tester) async {
+      final outerRouter = GoRouter(
+        initialLocation: '/host',
+        routes: [
+          GoRoute(
+            path: '/host',
+            builder: (context, state) =>
+                FlutterDeckApp(slides: [Container(), Container()], materialTheme: ThemeData.light()),
+          ),
+        ],
+      );
+      addTearDown(outerRouter.dispose);
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: outerRouter));
+      await tester.pumpAndSettle();
+
+      final apps = tester.widgetList<MaterialApp>(find.byType(MaterialApp)).toList();
+      final embeddedApp = apps.last;
+
+      expect(embeddedApp.routerConfig, isNull);
+      expect(embeddedApp.routeInformationProvider, isNotNull);
+      expect(embeddedApp.routeInformationProvider, isNot(same(outerRouter.routeInformationProvider)));
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+
+      expect(embeddedApp.routeInformationProvider!.value.uri.path, '/slide-2');
+      expect(outerRouter.routeInformationProvider.value.uri.path, '/host');
+    });
   });
 }
 

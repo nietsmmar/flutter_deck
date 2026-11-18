@@ -6,6 +6,7 @@ import 'package:flutter_deck/src/flutter_deck.dart';
 import 'package:flutter_deck/src/flutter_deck_router.dart';
 import 'package:flutter_deck/src/flutter_deck_slide.dart';
 import 'package:flutter_deck/src/flutter_deck_speaker_info.dart';
+import 'package:flutter_deck/src/non_reporting_route_information_provider.dart';
 import 'package:flutter_deck/src/presenter/presenter.dart';
 import 'package:flutter_deck/src/theme/flutter_deck_theme.dart';
 import 'package:flutter_deck/src/theme/flutter_deck_theme_notifier.dart';
@@ -68,6 +69,9 @@ class FlutterDeckApp extends StatefulWidget {
     this.supportedLocales = const <Locale>[_defaultLocale],
     bool? isPresenterView,
     this.navigatorObservers,
+    this.initialSlideIndex,
+    this.initialStep = 1,
+    this.onNavigationChanged,
     super.key,
   }) : assert(slides.length > 0, 'You must provide at least one slide'),
        assert(isPresenterView == null || client != null, 'You must provide a client when providing isPresenterView'),
@@ -133,6 +137,15 @@ class FlutterDeckApp extends StatefulWidget {
   /// An optional list of [NavigatorObserver]s that will be added to the router.
   final List<NavigatorObserver>? navigatorObservers;
 
+  /// Zero-based slide index restored when the deck is first mounted.
+  final int? initialSlideIndex;
+
+  /// One-based step restored within [initialSlideIndex].
+  final int initialStep;
+
+  /// Called whenever the active slide or step changes.
+  final void Function(int slideIndex, int step)? onNavigationChanged;
+
   @override
   State<FlutterDeckApp> createState() => _FlutterDeckAppState();
 }
@@ -140,6 +153,7 @@ class FlutterDeckApp extends StatefulWidget {
 class _FlutterDeckAppState extends State<FlutterDeckApp> {
   late FlutterDeckRouter _flutterDeckRouter;
   late GoRouter _router;
+  NonReportingRouteInformationProvider? _embeddedRouteInformationProvider;
 
   late FlutterDeckAutoplayNotifier _autoplayNotifier;
   late FlutterDeckControlsNotifier _controlsNotifier;
@@ -196,6 +210,8 @@ class _FlutterDeckAppState extends State<FlutterDeckApp> {
       final slides = widget.slides.where(_filterHidden).indexed.map(_buildRouterSlide).toList();
       _flutterDeckRouter.updateSlides(slides);
 
+      _embeddedRouteInformationProvider?.dispose();
+      _embeddedRouteInformationProvider = null;
       _router = _flutterDeckRouter.build(
         isPresenterView: widget.isPresenterView,
         navigatorObservers: widget.navigatorObservers,
@@ -208,6 +224,7 @@ class _FlutterDeckAppState extends State<FlutterDeckApp> {
   @override
   void dispose() {
     _presenterController.dispose();
+    _embeddedRouteInformationProvider?.dispose();
 
     super.dispose();
   }
@@ -236,21 +253,33 @@ class _FlutterDeckAppState extends State<FlutterDeckApp> {
   void _buildRouter() {
     final slides = widget.slides.where(_filterHidden).indexed.map(_buildRouterSlide).toList();
 
-    _flutterDeckRouter = FlutterDeckRouter(slides: slides);
+    _flutterDeckRouter = FlutterDeckRouter(slides: slides, onNavigationChanged: widget.onNavigationChanged);
     _router = _flutterDeckRouter.build(
       isPresenterView: widget.isPresenterView,
       navigatorObservers: widget.navigatorObservers,
+      initialSlideIndex: widget.initialSlideIndex,
+      initialStep: widget.initialStep,
     );
+  }
+
+  NonReportingRouteInformationProvider _getEmbeddedRouteInformationProvider() {
+    return _embeddedRouteInformationProvider ??= NonReportingRouteInformationProvider(_router.routeInformationProvider);
   }
 
   @override
   Widget build(BuildContext context) {
+    final isEmbedded = Router.maybeOf(context) != null;
+
     return ValueListenableBuilder(
       valueListenable: _localizationNotifier,
       builder: (context, locale, _) => ValueListenableBuilder(
         valueListenable: _themeNotifier,
         builder: (context, themeMode, _) => MaterialApp.router(
-          routerConfig: _router,
+          routerConfig: isEmbedded ? null : _router,
+          routeInformationProvider: isEmbedded ? _getEmbeddedRouteInformationProvider() : null,
+          routeInformationParser: isEmbedded ? _router.routeInformationParser : null,
+          routerDelegate: isEmbedded ? _router.routerDelegate : null,
+          backButtonDispatcher: isEmbedded ? _router.backButtonDispatcher : null,
           theme: widget.materialTheme,
           builder: (context, child) => FlutterDeck(
             configuration: widget.configuration,
